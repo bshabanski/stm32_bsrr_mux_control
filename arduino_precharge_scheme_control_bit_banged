@@ -1,0 +1,175 @@
+//Below code runs the precharging scheme and mux address select lines using bitbanging with the help of FastGPIO lib
+//FastGPIO available here: https://github.com/pololu/fastgpio-arduino
+#include <FastGPIO.h>
+#include <util/delay.h>
+int deadtime = 500;
+int az_delay = 10;
+int rst_dly = 1;
+int prech_dly = 1;
+int noOverlap = 10;
+
+
+void setup() {
+  FastGPIO::Pin<IO_B5>::setOutputLow(); //pin 13 - S0
+  FastGPIO::Pin<IO_B4>::setOutputLow(); //pin 12 - S1
+  FastGPIO::Pin<IO_B3>::setOutputLow(); //pin 11 - S2
+  //
+  FastGPIO::Pin<IO_B2>::setOutputLow(); //pin 10 - EN_N
+  FastGPIO::Pin<IO_B1>::setOutputHigh(); //pin 9 - CLK_A
+  FastGPIO::Pin<IO_B0>::setOutputHigh(); //pin 8 - CLK_B
+  FastGPIO::Pin<IO_D7>::setOutputLow(); //pin 7 - CLK_C
+
+
+}
+
+void loop() {
+
+FastGPIO::Pin<IO_B1>::setOutputHigh(); // CLK_A '1' -hz
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -hz
+FastGPIO::Pin<IO_D7>::setOutputLow(); // CLK_C '0' -hz
+
+
+//000
+FastGPIO::Pin<IO_B2>::setOutputHigh(); //EN_N - mux disabled
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_B3>::setOutputLow(); //S2 -address change
+delay(az_delay); // delay in ms
+FastGPIO::Pin<IO_B1>::setOutputLow(); // CLK_A '0' -rst
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -rst
+FastGPIO::Pin<IO_D7>::setOutputHigh(); // CLK_C '1' -rst
+_delay_us(rst_dly);// Output disable to clocking phase
+FastGPIO::Pin<IO_B1>::setOutputHigh(); // CLK_A '1' -prech
+FastGPIO::Pin<IO_B0>::setOutputLow(); // CLK_B '0' -prech
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_D7>::setOutputLow(); // CLK_C '0' -prech
+_delay_us(prech_dly);// pre-ch delay
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -HZ
+FastGPIO::Pin<IO_B2>::setOutputLow(); //EN_N - mux enabled
+
+//001
+FastGPIO::Pin<IO_B2>::setOutputHigh(); //EN_N - mux disabled
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_B5>::setOutputHigh(); //S0
+delay(az_delay); // delay in ms
+FastGPIO::Pin<IO_B1>::setOutputLow(); // CLK_A '0' -rst
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -rst
+FastGPIO::Pin<IO_D7>::setOutputHigh(); // CLK_C '1' -rst
+_delay_us(rst_dly);// Output disable to clocking phase
+FastGPIO::Pin<IO_B1>::setOutputHigh(); // CLK_A '1' -prech
+FastGPIO::Pin<IO_B0>::setOutputLow(); // CLK_B '0' -prech
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_D7>::setOutputLow(); // CLK_C '0' -prech
+_delay_us(prech_dly);// pre-ch delay
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -HZ
+FastGPIO::Pin<IO_B2>::setOutputLow(); //EN_N - mux enabled
+
+//011
+FastGPIO::Pin<IO_B2>::setOutputHigh(); //EN_N - mux disabled
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_B4>::setOutputHigh(); //S1
+delay(az_delay); // delay in ms
+FastGPIO::Pin<IO_B1>::setOutputLow(); // CLK_A '0' -rst
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -rst
+FastGPIO::Pin<IO_D7>::setOutputHigh(); // CLK_C '1' -rst
+_delay_us(rst_dly);// Output disable to clocking phase
+FastGPIO::Pin<IO_B1>::setOutputHigh(); // CLK_A '1' -prech
+FastGPIO::Pin<IO_B0>::setOutputLow(); // CLK_B '0' -prech
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_D7>::setOutputLow(); // CLK_C '0' -prech
+_delay_us(prech_dly);// pre-ch delay
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -HZ
+FastGPIO::Pin<IO_B2>::setOutputLow(); //EN_N - mux enabled
+
+
+//010
+FastGPIO::Pin<IO_B2>::setOutputHigh(); //EN_N - mux disabled
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_B5>::setOutputLow(); //S0
+delay(az_delay); // delay in ms
+FastGPIO::Pin<IO_B1>::setOutputLow(); // CLK_A '0' -rst
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -rst
+FastGPIO::Pin<IO_D7>::setOutputHigh(); // CLK_C '1' -rst
+_delay_us(rst_dly);// Output disable to clocking phase
+FastGPIO::Pin<IO_B1>::setOutputHigh(); // CLK_A '1' -prech
+FastGPIO::Pin<IO_B0>::setOutputLow(); // CLK_B '0' -prech
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_D7>::setOutputLow(); // CLK_C '0' -prech
+_delay_us(prech_dly);// pre-ch delay
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -HZ
+FastGPIO::Pin<IO_B2>::setOutputLow(); //EN_N - mux enabled
+
+
+//110
+FastGPIO::Pin<IO_B2>::setOutputHigh(); //EN_N - mux disabled
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_B3>::setOutputHigh(); //S2
+delay(az_delay); // delay in ms
+FastGPIO::Pin<IO_B1>::setOutputLow(); // CLK_A '0' -rst
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -rst
+FastGPIO::Pin<IO_D7>::setOutputHigh(); // CLK_C '1' -rst
+_delay_us(rst_dly);// Output disable to clocking phase
+FastGPIO::Pin<IO_B1>::setOutputHigh(); // CLK_A '1' -prech
+FastGPIO::Pin<IO_B0>::setOutputLow(); // CLK_B '0' -prech
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_D7>::setOutputLow(); // CLK_C '0' -prech
+_delay_us(prech_dly);// pre-ch delay
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -HZ
+FastGPIO::Pin<IO_B2>::setOutputLow(); //EN_N - mux enabled
+
+//111
+FastGPIO::Pin<IO_B2>::setOutputHigh(); //EN_N - mux disabled
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_B5>::setOutputHigh(); //S0
+delay(az_delay); // delay in ms
+FastGPIO::Pin<IO_B1>::setOutputLow(); // CLK_A '0' -rst
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -rst
+FastGPIO::Pin<IO_D7>::setOutputHigh(); // CLK_C '1' -rst
+_delay_us(rst_dly);// Output disable to clocking phase
+FastGPIO::Pin<IO_B1>::setOutputHigh(); // CLK_A '1' -prech
+FastGPIO::Pin<IO_B0>::setOutputLow(); // CLK_B '0' -prech
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_D7>::setOutputLow(); // CLK_C '0' -prech
+_delay_us(prech_dly);// pre-ch delay
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -HZ
+FastGPIO::Pin<IO_B2>::setOutputLow(); //EN_N - mux enabled
+
+
+//101
+FastGPIO::Pin<IO_B2>::setOutputHigh(); //EN_N - mux disabled
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_B4>::setOutputLow(); //S1
+delay(az_delay); // delay in ms
+FastGPIO::Pin<IO_B1>::setOutputLow(); // CLK_A '0' -rst
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -rst
+FastGPIO::Pin<IO_D7>::setOutputHigh(); // CLK_C '1' -rst
+_delay_us(rst_dly);// Output disable to clocking phase
+FastGPIO::Pin<IO_B1>::setOutputHigh(); // CLK_A '1' -prech
+FastGPIO::Pin<IO_B0>::setOutputLow(); // CLK_B '0' -prech
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_D7>::setOutputLow(); // CLK_C '0' -prech
+_delay_us(prech_dly);// pre-ch delay
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -HZ
+FastGPIO::Pin<IO_B2>::setOutputLow(); //EN_N - mux enabled
+
+
+
+//100
+FastGPIO::Pin<IO_B2>::setOutputHigh(); //EN_N - mux disabled
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_B5>::setOutputLow(); //S0
+delay(az_delay); // delay in ms
+FastGPIO::Pin<IO_B1>::setOutputLow(); // CLK_A '0' -rst
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -rst
+FastGPIO::Pin<IO_D7>::setOutputHigh(); // CLK_C '1' -rst
+_delay_us(rst_dly);// Output disable to clocking phase
+FastGPIO::Pin<IO_B1>::setOutputHigh(); // CLK_A '1' -prech
+FastGPIO::Pin<IO_B0>::setOutputLow(); // CLK_B '0' -prech
+_delay_us(noOverlap);// Output disable to clocking phase
+FastGPIO::Pin<IO_D7>::setOutputLow(); // CLK_C '0' -prech
+_delay_us(prech_dly);// pre-ch delay
+FastGPIO::Pin<IO_B0>::setOutputHigh(); // CLK_B '1' -HZ
+FastGPIO::Pin<IO_B2>::setOutputLow(); //EN_N - mux enabled
+
+
+delay(3000);
+}
